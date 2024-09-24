@@ -135,6 +135,38 @@ app.post('/api/install', upload.single('apk'), async (req, res) => {
   }
 });
 
+// New route to list installed apps
+app.post('/api/list-apps', async (req, res) => {
+  const { device } = req.body;
+  if (!device) {
+    return res.status(400).json({ error: 'Device identifier is required' });
+  }
+
+  try {
+    const command = `adb -s ${device} shell pm list packages -f -3`;
+    console.log('Executing command:', command);
+    const { stdout, stderr } = await execPromise(command);
+
+    if (stderr) {
+      console.error('List apps stderr:', stderr);
+      return res.status(500).json({ error: 'Failed to list apps', details: stderr });
+    }
+
+    console.log('List apps stdout:', stdout);
+    const apps = stdout.split('\n')
+      .filter(line => line.trim() !== '')
+      .map(line => {
+        const match = line.match(/package:(.+)=(.+)/);
+        return match ? match[2] : line.trim();
+      });
+
+    res.json({ success: true, apps });
+  } catch (error) {
+    console.error('Error listing apps:', error);
+    res.status(500).json({ error: 'Failed to list apps', details: error.message });
+  }
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });

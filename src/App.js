@@ -3,6 +3,7 @@ import DeviceScanner from './components/DeviceScanner';
 import DeviceSelector from './components/DeviceSelector';
 import FileUploader from './components/FileUploader';
 import InstallButton from './components/InstallButton';
+import ListAppsButton from './components/ListAppsButton';
 
 function App() {
   const [isScanning, setIsScanning] = useState(false);
@@ -13,6 +14,7 @@ function App() {
   const [deviceAddress, setDeviceAddress] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
   const [backendUrl, setBackendUrl] = useState('http://localhost:5000');
+  const [isListingApps, setIsListingApps] = useState(false);
 
   const handleScan = useCallback(async () => {
     setIsScanning(true);
@@ -177,7 +179,7 @@ function App() {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <FileUploader onFileChange={handleFileChange} selectedFile={apkFile} />
           <InstallButton
             onInstall={handleInstall}
@@ -185,6 +187,14 @@ function App() {
             disabled={!selectedDevice || !apkFile}
           />
         </div>
+
+        <ListAppsButton
+          onListApps={setIsListingApps}
+          isListing={isListingApps}
+          disabled={!selectedDevice}
+          backendUrl={backendUrl}
+          selectedDevice={selectedDevice}
+        />
       </div>
     </div>
   );
