@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DeviceScanner from './components/DeviceScanner';
 import DeviceSelector from './components/DeviceSelector';
 import FileUploader from './components/FileUploader';
@@ -12,15 +12,12 @@ function App() {
   const [isInstalling, setIsInstalling] = useState(false);
   const [deviceAddress, setDeviceAddress] = useState('');
   const [isConnecting, setIsConnecting] = useState(false);
+  const [backendUrl, setBackendUrl] = useState('http://localhost:5000');
 
-  useEffect(() => {
-    handleScan();
-  }, []);
-
-  const handleScan = async () => {
+  const handleScan = useCallback(async () => {
     setIsScanning(true);
     try {
-      const response = await fetch('http://localhost:5000/api/devices');
+      const response = await fetch(`${backendUrl}/api/devices`);
       const data = await response.json();
       setDevices(data.devices);
     } catch (error) {
@@ -28,7 +25,15 @@ function App() {
       alert('Failed to scan devices');
     }
     setIsScanning(false);
-  };
+  }, [backendUrl]);
+
+  useEffect(() => {
+    const savedBackendUrl = localStorage.getItem('backendUrl');
+    if (savedBackendUrl) {
+      setBackendUrl(savedBackendUrl);
+    }
+    handleScan();
+  }, [handleScan]);
 
   const handleConnect = async () => {
     if (!deviceAddress) {
@@ -37,7 +42,7 @@ function App() {
     }
     setIsConnecting(true);
     try {
-      const response = await fetch('http://localhost:5000/api/connect', {
+      const response = await fetch(`${backendUrl}/api/connect`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +90,7 @@ function App() {
     formData.append('device', selectedDevice);
 
     try {
-      const response = await fetch('http://localhost:5000/api/install', {
+      const response = await fetch(`${backendUrl}/api/install`, {
         method: 'POST',
         body: formData,
       });
@@ -102,11 +107,24 @@ function App() {
     setIsInstalling(false);
   };
 
+  const handleBackendUrlChange = (e) => {
+    const newUrl = e.target.value;
+    setBackendUrl(newUrl);
+    localStorage.setItem('backendUrl', newUrl);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
         <h1 className="text-2xl font-bold mb-4">Mobile ADB Tool</h1>
         <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Backend URL"
+            value={backendUrl}
+            onChange={handleBackendUrlChange}
+            className="w-full p-2 border rounded mb-2"
+          />
           <input
             type="text"
             placeholder="Device Address (IP:PORT)"

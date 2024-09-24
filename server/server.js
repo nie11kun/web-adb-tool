@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/')
   },
   filename: function (req, file, cb) {
-    // 保留原始文件扩展名
     const fileExt = path.extname(file.originalname);
     cb(null, `${Date.now()}${fileExt}`);
   }
@@ -24,6 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// 允许所有来源的跨域请求
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -135,6 +135,6 @@ app.post('/api/install', upload.single('apk'), async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
