@@ -143,7 +143,7 @@ app.post('/api/list-apps', async (req, res) => {
   }
 
   try {
-    const command = `adb -s ${device} shell pm list packages -f -3`;
+    const command = `adb -s ${device} shell "pm list packages -f -3 && pm list packages -f -3 -U"`;
     console.log('Executing command:', command);
     const { stdout, stderr } = await execPromise(command);
 
@@ -153,17 +153,53 @@ app.post('/api/list-apps', async (req, res) => {
     }
 
     console.log('List apps stdout:', stdout);
-    const apps = stdout.split('\n')
+    const lines = stdout.split('\n');
+    const packagesWithPath = lines.slice(0, lines.length / 2);
+    const packagesWithVersion = lines.slice(lines.length / 2);
+
+    const apps = packagesWithPath
       .filter(line => line.trim() !== '')
       .map(line => {
-        const match = line.match(/package:(.+)=(.+)/);
-        return match ? match[2] : line.trim();
+        const pathMatch = line.match(/package:(.+)=(.+)/);
+        const packageName = pathMatch ? pathMatch[2] : line.trim();
+        const versionLine = packagesWithVersion.find(vLine => vLine.includes(packageName));
+        const versionMatch = versionLine ? versionLine.match(/versionName=(.+)$/) : null;
+        const version = versionMatch ? versionMatch[1] : 'Unknown';
+        return { packageName, version };
       });
 
     res.json({ success: true, apps });
   } catch (error) {
     console.error('Error listing apps:', error);
     res.status(500).json({ error: 'Failed to list apps', details: error.message });
+  }
+});
+
+app.post('/api/uninstall-app', async (req, res) => {
+  const { device, packageName } = req.body;
+  if (!device || !packageName) {
+    return res.status(400).json({ error: 'Device identifier and package name are required' });
+  }
+
+  try {
+    const command = `adb -s ${device} uninstall ${packageName}`;
+    console.log('Executing command:', command);
+    const { stdout, stderr } = await execPromise(command);
+
+    if (stderr) {
+      console.error('Uninstall app stderr:', stderr);
+      return res.status(500).json({ error: 'Failed to uninstall app', details: stderr });
+    }
+
+    console.log('Uninstall app stdout:', stdout);
+    if (stdout.includes('Success')) {
+      res.json({ success: true, message: 'App uninstalled successfully' });
+    } else {
+      res.status(500).json({ error: 'Failed to uninstall app', details: stdout });
+    }
+  } catch (error) {
+    console.error('Error uninstalling app:', error);
+    res.status(500).json({ error: 'Failed to uninstall app', details: error.message });
   }
 });
 
