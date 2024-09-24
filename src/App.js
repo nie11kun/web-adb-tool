@@ -126,44 +126,65 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-        <h1 className="text-2xl font-bold mb-4">Mobile ADB Tool</h1>
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Backend URL"
-            value={backendUrl}
-            onChange={handleBackendUrlChange}
-            className="w-full p-2 border rounded mb-2"
-          />
-          <input
-            type="text"
-            placeholder="Device Address (IP:PORT)"
-            value={deviceAddress}
-            onChange={handleDeviceAddressChange}
-            className="w-full p-2 border rounded"
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl">
+        <h1 className="text-2xl font-bold mb-4 text-center text-blue-600">Mobile ADB Tool</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label htmlFor="backendUrl" className="block text-sm font-medium text-gray-700 mb-1">Backend URL</label>
+            <input
+              id="backendUrl"
+              type="text"
+              placeholder="http://localhost:5000"
+              value={backendUrl}
+              onChange={handleBackendUrlChange}
+              className="w-full p-2 h-10 text-sm border rounded focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="deviceAddress" className="block text-sm font-medium text-gray-700 mb-1">Device Address</label>
+            <div className="flex">
+              <input
+                id="deviceAddress"
+                type="text"
+                placeholder="192.168.1.100:5555"
+                value={deviceAddress}
+                onChange={handleDeviceAddressChange}
+                className="flex-grow p-2 h-10 text-sm border rounded-l focus:ring-blue-500 focus:border-blue-500"
+              />
+              <button
+                onClick={handleConnect}
+                className="px-4 h-10 bg-blue-500 text-white rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition"
+                disabled={isConnecting}
+              >
+                {isConnecting ? 'Connecting...' : 'Connect'}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mb-4 flex items-center">
+          <div className="flex-grow">
+            <DeviceSelector
+              devices={devices}
+              selectedDevice={selectedDevice}
+              onSelect={setSelectedDevice}
+            />
+          </div>
+          <div className="ml-2">
+            <DeviceScanner onScan={handleScan} isScanning={isScanning} />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FileUploader onFileChange={handleFileChange} selectedFile={apkFile} />
+          <InstallButton
+            onInstall={handleInstall}
+            isInstalling={isInstalling}
+            disabled={!selectedDevice || !apkFile}
           />
         </div>
-        <button
-          onClick={handleConnect}
-          className="w-full p-2 mb-4 bg-blue-500 text-white rounded"
-          disabled={isConnecting}
-        >
-          {isConnecting ? 'Connecting...' : 'Connect to Device'}
-        </button>
-        <DeviceScanner onScan={handleScan} isScanning={isScanning} />
-        <DeviceSelector
-          devices={devices}
-          selectedDevice={selectedDevice}
-          onSelect={setSelectedDevice}
-        />
-        <FileUploader onFileChange={handleFileChange} selectedFile={apkFile} />
-        <InstallButton
-          onInstall={handleInstall}
-          isInstalling={isInstalling}
-          disabled={!selectedDevice || !apkFile}
-        />
       </div>
     </div>
   );
