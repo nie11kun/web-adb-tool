@@ -28,12 +28,17 @@ function App() {
   }, [backendUrl]);
 
   useEffect(() => {
+    // Load saved data from localStorage
     const savedBackendUrl = localStorage.getItem('backendUrl');
-    if (savedBackendUrl) {
-      setBackendUrl(savedBackendUrl);
-    }
+    const savedDeviceAddress = localStorage.getItem('deviceAddress');
+    const savedSelectedDevice = localStorage.getItem('selectedDevice');
+
+    if (savedBackendUrl) setBackendUrl(savedBackendUrl);
+    if (savedDeviceAddress) setDeviceAddress(savedDeviceAddress);
+    if (savedSelectedDevice) setSelectedDevice(savedSelectedDevice);
+
     handleScan();
-  }, [handleScan]);
+  }, [handleScan]); // Add handleScan to the dependency array
 
   const handleConnect = async () => {
     if (!deviceAddress) {
@@ -53,6 +58,7 @@ function App() {
       if (data.success) {
         alert('Device connected successfully');
         setSelectedDevice(deviceAddress);
+        localStorage.setItem('selectedDevice', deviceAddress);
         handleScan(); // Refresh device list
       } else {
         alert(`Failed to connect to device: ${data.error}\nDetails: ${data.details || 'No additional details'}`);
@@ -113,6 +119,12 @@ function App() {
     localStorage.setItem('backendUrl', newUrl);
   };
 
+  const handleDeviceAddressChange = (e) => {
+    const newAddress = e.target.value;
+    setDeviceAddress(newAddress);
+    localStorage.setItem('deviceAddress', newAddress);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
@@ -129,7 +141,7 @@ function App() {
             type="text"
             placeholder="Device Address (IP:PORT)"
             value={deviceAddress}
-            onChange={(e) => setDeviceAddress(e.target.value)}
+            onChange={handleDeviceAddressChange}
             className="w-full p-2 border rounded"
           />
         </div>
