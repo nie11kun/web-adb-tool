@@ -1,70 +1,90 @@
-# Getting Started with Create React App
+# Web ADB Tool
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Web ADB Tool is a web-based application that allows you to manage Android devices remotely using ADB (Android Debug Bridge) commands. This tool provides a user-friendly interface for common ADB operations such as connecting to devices, installing APKs, listing installed apps, and uninstalling apps.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Connect to Android devices over network
+- Scan for available devices
+- Install APK files remotely
+- List installed third-party applications
+- View app version information
+- Uninstall applications with confirmation
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Before you begin, ensure you have met the following requirements:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js (v12 or later)
+- npm (usually comes with Node.js)
+- ADB (Android Debug Bridge) installed and added to your system PATH
 
-### `npm test`
+## Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+To install Web ADB Tool, follow these steps:
 
-### `npm run build`
+1. Clone the repository:
+   ```
+   git clone https://github.com/nie11kun/web-adb-tool.git
+   cd web-adb-tool
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Install the dependencies for both server and client:
+   ```
+   npm install
+   cd server
+   npm install
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+To use Web ADB Tool, follow these steps:
 
-### `npm run eject`
+1. Start the backend server:
+   ```
+   cd server
+   node server.js
+   ```
+   The server will start on `http://localhost:5000` by default.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. In a new terminal, start the frontend development server:
+   ```
+   cd ..  # If you're still in the server directory
+   npm start
+   ```
+   The React development server will start, usually on `http://localhost:3000`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Open your web browser and navigate to `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Use the interface to connect to devices, install APKs, list apps, and perform other operations.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Main Components
 
-## Learn More
+- **Server**: Express.js server (server.js) that interfaces with ADB and executes commands.
+- **Frontend**: React application providing the user interface.
+  - `App.js`: Main component containing the overall layout and state management.
+  - `DeviceScanner.js`: Component for scanning and listing available devices.
+  - `DeviceSelector.js`: Component for selecting a device to operate on.
+  - `FileUploader.js`: Component for selecting APK files to install.
+  - `InstallButton.js`: Component for initiating the APK installation process.
+  - `ListAppsButton.js`: Component for listing installed apps and providing uninstall functionality.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Contributing
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Contributions to Mobile ADB Tool are welcome. Please follow these steps:
 
-### Code Splitting
+1. Fork the repository.
+2. Create a new branch: `git checkout -b <branch_name>`.
+3. Make your changes and commit them: `git commit -m '<commit_message>'`
+4. Push to the original branch: `git push origin <project_name>/<location>`
+5. Create the pull request.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Alternatively, see the GitHub documentation on [creating a pull request](https://help.github.com/articles/creating-a-pull-request/).
 
-### Analyzing the Bundle Size
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This project uses the following license: [MIT License](LICENSE).
 
-### Making a Progressive Web App
+## Contact
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+If you want to contact the maintainer, you can reach out at [me@niekun.net](mailto:me@niekun.net).
